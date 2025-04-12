@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_cors import CORS
-from database.vector_db import VectorDatabase
 from config import load_config
 from api.routes import init_routes
 

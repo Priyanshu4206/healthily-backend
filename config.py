@@ -10,7 +10,12 @@ def load_config():
 
     # Load environment variables from .env file inside First-Aid-Backend
     env_path = os.path.join(base_dir, ".env")
-    print(f"[DEBUG] Looking for .env file at: {env_path}")
+    # Try loading local .env file only if it exists (for local dev)
+    if os.path.exists(env_path):
+        print(f"[INFO] Loading local .env file from {env_path}")
+        load_dotenv(env_path)
+    else:
+        print("[INFO] .env file not found. Assuming environment variables are set by host (e.g., Render).")
 
     # Check if .env file exists
     if not os.path.exists(env_path):
