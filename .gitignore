@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python environment files
+pip-log.txt
+pip-delete-this-directory.txt
+
+# dotenv
+.env
+
+# FAISS vector database files
+*.faiss
+*.index
+data/faiss_db/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Pytest cache
+.pytest_cache/
+.cache/
+
+# Logs
+*.log
+
+# Jupyter Notebook Checkpoints (if any)
+.ipynb_checkpoints/
+
+# Gunicorn socket or PID files
+*.pid
+*.sock
+
+# Render build files
+build/
+dist/
+*.egg-info/
+
+# Misc
+instance/
+*.sqlite
