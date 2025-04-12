@@ -9,3 +9,4 @@ faiss-cpu
 sentence-transformers
 langchain-community
 gunicorn
+boto3

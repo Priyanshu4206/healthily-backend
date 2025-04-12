@@ -5,6 +5,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 from datasets import load_dataset
+from utils.helpers import download_from_s3
 
 class VectorDatabase:
     _instance = None
@@ -22,13 +23,23 @@ class VectorDatabase:
     
     @staticmethod
     def _create_or_load_db(config):
-        """Create a new vector database or load an existing one"""
+        bucket_name = config.get("s3_bucket_name")
+        aws_access_key_id = config.get("aws_access_key_id")
+        aws_secret_access_key = config.get("aws_secret_access_key")
+        
         db_path = config['db_path']
         index_path = os.path.join(db_path, "faiss_index")
         store_path = os.path.join(db_path, "faiss_store.pkl")
         
         print(f"\n[INFO] Database Path: {db_path}")
-        
+
+        if not (os.path.exists(index_path) and os.path.exists(store_path)):
+            print("[INFO] FAISS DB not found locally. Downloading from S3...")
+
+            download_from_s3(bucket_name, "faiss_db/faiss_index/index.faiss", os.path.join(index_path, "index.faiss"), aws_access_key_id, aws_secret_access_key)
+            download_from_s3(bucket_name, "faiss_db/faiss_index/index.pkl", os.path.join(index_path, "index.pkl"), aws_access_key_id, aws_secret_access_key)
+            download_from_s3(bucket_name, "faiss_db/faiss_store.pkl", store_path, aws_access_key_id, aws_secret_access_key)
+                
         # Create embeddings
         print("[INFO] Initializing HuggingFace embeddings...")
         embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")

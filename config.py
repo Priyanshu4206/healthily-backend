@@ -11,13 +11,25 @@ def load_config():
     # Load environment variables from .env file inside First-Aid-Backend
     env_path = os.path.join(base_dir, ".env")
     print(f"[DEBUG] Looking for .env file at: {env_path}")
+
+    # Check if .env file exists
+    if not os.path.exists(env_path):
+        raise FileNotFoundError(f"[ERROR] .env file not found at {env_path}. Ensure it exists!")
+
     load_dotenv(env_path)
     
-    # Get API key
+    # Get API keys and other environment variables
     groq_api_key = os.getenv("GROQ_API_KEY")
+    aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+    aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+    s3_bucket_name = os.getenv("S3_BUCKET_NAME")
+
+    # Validate required variables
     if not groq_api_key:
-        raise ValueError("[ERROR] API Key not found! Ensure the .env file exists and contains GROQ_API_KEY.")
-    
+        raise ValueError("[ERROR] API Key not found! Ensure the .env file contains GROQ_API_KEY.")
+    if not aws_access_key_id or not aws_secret_access_key or not s3_bucket_name:
+        raise ValueError("[ERROR] Missing AWS credentials or S3 bucket name in .env file!")
+
     # Define correct FAISS database path inside First-Aid-Backend
     db_path = os.path.join(base_dir, "data", "faiss_db")
     
@@ -44,11 +56,14 @@ def load_config():
     
     # Return configuration
     return {
+        "s3_bucket_name": s3_bucket_name,
         "groq_api_key": groq_api_key,
         "db_path": db_path,
         "model_name": "llama-3.3-70b-versatile",
         "temperature": 0,
         "host": "0.0.0.0",
         "port": int(os.environ.get("PORT", 5000)),
-        "debug": False
+        "debug": False,
+        "aws_access_key_id": aws_access_key_id,
+        "aws_secret_access_key": aws_secret_access_key
     }
